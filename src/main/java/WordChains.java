@@ -1,11 +1,10 @@
-import org.assertj.core.util.Lists;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,12 +16,35 @@ import java.util.stream.Stream;
  * @author Alec.Tunbridge, @date 31/03/16 16:08
  */
 public class WordChains {
-    public boolean readFile() throws URISyntaxException, IOException {
+
+    private final ArrayList<String> dictionary;
+    private final String start;
+    private final String end;
+    private List<String> answer;
+    private List<String> possibleWords;
+    private List<String> wordsOfCorrectLength;
+
+
+    public WordChains(ArrayList<String> strings, String start, String end) {
+        this.start = start;
+        this.end = end;
+        dictionary = strings;
+        answer = new ArrayList<>();
+    }
+
+    public WordChains() {
+        dictionary = null;
+        start = null;
+        end = null;
+        possibleWords = null;
+        answer = new ArrayList<>();
+    }
+
+    private List<String> readFile() throws URISyntaxException, IOException {
         Path path = Paths.get(ClassLoader.getSystemResource("words.txt").toURI());
         try(Stream<String> lines = Files.lines(path, Charset.forName("ISO-8859-1"))){
-            lines.forEach(System.out::println);
+            return lines.collect(Collectors.toList());
         }
-        return true;
     }
 
     public List<String> findWordsOfGivenLength(List<String> words, final int length) {
@@ -46,19 +68,22 @@ public class WordChains {
         return 1 == differences;
     }
 
-    public List<String> wordChain(String start, String end) {
+    public List<String> findChain() {
+        wordsOfCorrectLength = findWordsOfGivenLength(dictionary, start.length());
+        return findChain(start);
+    }
 
-        List<String> dictionary = Lists.newArrayList("cat","cog","cat");
-
-        List<String> words = findWordsOfGivenLength(dictionary, start.length());
-
-        List<String> possibleWords = words.stream()
-                .filter(s -> areOneApart(start, s))
+    private List<String> findChain(String currentWord){
+        answer.add(currentWord);
+        possibleWords = wordsOfCorrectLength.stream()
+                .filter(s -> areOneApart(currentWord, s) && !answer.contains(s))
                 .collect(Collectors.toList());
 
         if(possibleWords.contains(end)){
-            return Lists.newArrayList(start,end);
+            answer.add(end);
+            return answer;
+        } else {
+            return findChain(possibleWords.get(0));
         }
-        return null;
     }
 }
