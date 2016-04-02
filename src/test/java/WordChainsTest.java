@@ -17,32 +17,20 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class WordChainsTest {
     private WordChains wordChains;
-    @Ignore
-    @Test public void readFile() throws IOException, URISyntaxException {
-        WordChains classUnderTest = new WordChains();
-        assertThat(classUnderTest.readFile()).isTrue();
-    }
 
-    @Before
-    public void setup() {
-        wordChains = new WordChains();
+
+    @Test
+    public void distance_sameWords_zero() {
+        assertThat(WordChains.distance("dog", "dog")).isEqualTo(0);
     }
 
     @Test
-    public void findWordsOfSameLength() {
-        List<String> words = new ArrayList<>(Arrays.asList(new String[]{"bob", "bib", "bap", "to", "boat"}));
-        List<String> result = wordChains.findWordsOfGivenLength(words, 3);
-        assertThat(result).hasSize(3).contains("bob", "bib", "bap");
+    public void distance_singleDifferingLetter_one() {
+        assertThat(WordChains.distance("dog", "dob")).isEqualTo(1);
     }
 
     @Test
-    public void distanceOfOne() {
-        assertThat(wordChains.areOneApart("cat", "cot")).isTrue();
-        assertThat(wordChains.areOneApart("cat", "dot")).isFalse();
-    }
-
-    @Test
-    public void answerWithDistanceOfOne(){
-        assertThat(wordChains.wordChain("cat","cot")).hasSize(2).containsExactly("cat","cot");
+    public void distance_twoDifferingLetters_two() {
+        assertThat(WordChains.distance("dog", "dgo")).isEqualTo(2);
     }
 }
