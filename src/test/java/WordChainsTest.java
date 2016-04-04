@@ -12,8 +12,5 @@ import static org.junit.Assert.*;
  * @author Alec.Tunbridge, @date 31/03/16 16:08
  */
 public class WordChainsTest {
-    @Test public void readFile() throws IOException, URISyntaxException {
-        WordChains classUnderTest = new WordChains();
-        assertTrue("readFile should return 'true'", classUnderTest.readFile());
-    }
+   
 }
